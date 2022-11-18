@@ -1,0 +1,152 @@
+{%- comment -%}
+  HTML
+{%- endcomment -%}
+<link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css"/>
+<ul class="nisokuhokou">
+  {%- comment -%}
+    {%- for item in (1..5) -%}
+    <li>
+    {{ item }}
+    <div id="PAPA"></div>
+    <div id="MAMA"></div>
+    <div id="NI-NA"></div>
+    </li>
+    {%- endfor -%}
+  {%- endcomment -%}
+
+</ul>
+
+{%- comment -%}
+  JavaScript
+{%- endcomment -%}
+<script type="text/javascript" src={{ 'jquery-3.6.1.min.js' | asset_url }} defer></script>
+<script type="text/javascript" src="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js" defer></script>
+
+<script>
+  {%- if block.settings.id -%}
+    var id = 1;{%- endif -%}
+
+// 条件変数
+
+
+// ルートに使うやつ,getのあれ
+  var waiwai = new URLSearchParams({event: id});
+
+// API？
+  var url = 'http://localhost:8081/api/data' + '/' + id;
+
+// 接続のやつ
+  fetch(url).then((res) => {
+    return res.json();
+  }).then((data) => {
+    displayData(data);
+  }).catch(function(error) {
+    console.log(error);
+  });
+
+  const displayData = (data) => {
+    console.log(data);
+    console.log(url);
+    let news = data;
+    $(document).ready(function() {
+      var ber = $('.nisokuhokou').slick({
+        autoplay: true, // オート再生
+        dots: false, // ドットナビゲーションを表示しない
+        speed: 8000, // スライドさせるスピード（ミリ秒）
+        infinite: true, // ループ
+        cssEase: 'linear', // 等速
+        autoplaySpeed: 0, // オートスピード
+        arrows: false, // ボタン表示
+        variableWidth: true, // スライド幅の自動計算を無効化
+        pauseOnFocus: false, // 一時停止（クリック）
+        pauseOnHover: false, // 一時停止（カーソル）
+        pauseOnDotsHover: false,
+        swipe: false,
+        swipeToSlide: false,
+        touchMove: false
+      });
+
+// json取得
+// var data_stringify = JSON.stringify(data);
+// var data_json = JSON.parse(data_stringify);
+
+// カラム指定
+// var data_title = data_json[0]["title"];
+// var data_url = data_json[0]["url"];
+// var data_time = data_json[0]["created_at"];
+
+// 表示指定（ID）
+// $('#PAPA').text(data_time);
+// $('#MAMA').text(data_title);
+// $('#NI-NA').text(data_url);
+    });
+
+
+
+// 表示
+    for (var i in news) {
+
+      var taim = new Date(news[i].created_at);
+      var day = taim.toLocaleDateString();
+      $('.nisokuhokou').append("<li class='c1'><a href=" + news[i].url + " class='b1'>" + day + "：" + news[i].title + "</a></li>");
+    }
+    $('.nisokuhokou').append($(".c1").clone());
+  }
+</script>
+
+{%- comment -%}
+  スタイル
+{%- endcomment -%}
+
+<style>
+  .snisokuhokou .slick-slide {
+    width: 300px;
+    height: 200px;
+    position: relative;
+    overflow: hidden;
+  }
+  li {
+    margin-right: 0.3%;
+  }
+  .b1 {
+    text-decoration: none;
+  }
+  .b1:link {
+    /*ない*/
+    color: #b788ff;
+  }
+  .b1:visited {
+    /*ある*/
+    color: #b788ff;
+  }
+  .b1:hover {
+    /*カーソル*/
+    color: #f7566c;
+  }
+  .b1:active {
+    /*クリック*/
+    color: #33CC00;
+  }
+  .nisokuhokou {
+    background-color: #56d7f71e;
+    padding: 0;
+  }
+</style>
+
+{%- comment -%}
+  管理画面
+{%- endcomment -%}
+
+{% schema %}
+  {
+    "name": "momotarou",
+    "target": "section",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "id",
+        "label": "チェックを入れてはいけない"
+      }
+    ]
+  }
+{% endschema %}
